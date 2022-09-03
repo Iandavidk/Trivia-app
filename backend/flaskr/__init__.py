@@ -166,6 +166,26 @@ def create_app(test_config=None):
     only question that include that string within their question.
     Try using the word "title" to start.
     """
+    @app.route('/questions/search', methods=['POST'])
+    def search_questions():
+        body = request.get_json()
+
+        if body is None or body['search_term'] is None:
+            abort(400)
+
+        search_term = body.get('search_term')
+        results = Question.query.filter(Question.question.ilike(f'%{search_term}%')).all()
+
+        if len(results) == 0:
+            abort(404)
+
+        matching_questions = paginate_questions(request, results)
+
+        return jsonify({
+            'success': True,
+            'questions': matching_questions,
+            'total_results': len(results)
+        })
 
     """
     @TODO:
@@ -175,6 +195,26 @@ def create_app(test_config=None):
     categories in the left column will cause only questions of that
     category to be shown.
     """
+    @app.route('/categories/<int:category_id>/questions')
+    def questions_by_categories(category_id):
+
+        category = Category.query.get(category_id)
+
+        if category is None:
+            abort(404)
+
+        category_questions = Question.query.filter(Question.category==category_id).all()
+        questions = paginate_questions(request, category_questions)
+
+        if len(questions) == 0:
+            abort(404)
+
+        return jsonify({
+        'success': True,
+        'questions': questions,
+        'total_results': len(category_questions),
+        'current_category': category.id
+        })
 
     """
     @TODO:
@@ -187,6 +227,35 @@ def create_app(test_config=None):
     one question at a time is displayed, the user is allowed to answer
     and shown whether they were correct or not.
     """
+    @app.route('/quiz', methods=['POST'])
+    def quiz_questions():
+        body = request.get_json()
+
+        if body is None or body['previous_questions'] is None or body['category'] is None:
+            abort(400)
+
+        try:
+            previous_questions = body.get('previous_questions')
+            category = body.get('category')
+
+            if category == 0:
+                questions = Question.query.order_by(func.random())
+            else:
+                questions = Question.query.filter(Question.category==category).order_by(func.random())
+
+            question = questions.filter(Question.id.notin_(previous_questions)).first()
+
+            if question is None:
+                return jsonify({
+                'success': True
+                })
+
+            return jsonify({
+                'success': True,
+                'question': question.format()
+            })
+        except:
+            abort(422)
 
     """
     @TODO:
