@@ -18,10 +18,10 @@ The application has the following functionality:
 
 Tech stack includes:
 
-- **React.js** for the applications's frontend.
-- **Python3** and **Flask** as my server-side language and server-side framework.
-- **PostgreSQL** is the database used in the application
-- **SQLAlchemy ORM** to be my Object Relational Mapping(ORM) library
+- React.js for the applications's frontend.
+- Python3 and Flask as my server-side language and server-side framework.
+- PostgreSQL is the database used in the application.
+- SQLAlchemy ORM is the Object Relational Mapping(ORM) library.
 
 ## Getting Started
 
