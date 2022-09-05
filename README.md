@@ -2,7 +2,7 @@
 
 ## Trivia App
 
-This app is a full-stack trivia game where users can test their knowledge answering trivia questions. The app has been bult using TDD principles:
+This app is a full-stack trivia game where users can test their knowledge answering trivia questions. The app has been built using TDD principles:
 
 The application has the following functionality:
 
