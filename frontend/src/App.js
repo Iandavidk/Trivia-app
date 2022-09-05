@@ -6,6 +6,8 @@ import QuestionView from './components/QuestionView';
 import Header from './components/Header';
 import QuizView from './components/QuizView';
 
+export const HOST = 'http://localhost:3000';
+
 class App extends Component {
   render() {
     return (
