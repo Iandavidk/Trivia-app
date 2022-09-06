@@ -36,6 +36,7 @@ def create_app(test_config=None):
     """
     @app.route('/categories')
     def retrieve_categories():
+        all_categories = Category.query.all()
         categories = Category.query.order_by(Category.id).all()
         all_categories = [category.format() for category in categories]
     
