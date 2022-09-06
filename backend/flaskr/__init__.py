@@ -9,6 +9,16 @@ from models import setup_db, Question, Category
 
 QUESTIONS_PER_PAGE = 10
 
+def paginate_questions(request, selection):
+        page = request.args.get('page', 1, type=int)
+        start =  (page - 1) * QUESTIONS_PER_PAGE
+        end = start + QUESTIONS_PER_PAGE
+
+        questions = [question.format() for question in selection]
+        current_questions = questions[start:end]
+
+        return current_questions
+
 def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__)
@@ -35,19 +45,19 @@ def create_app(test_config=None):
     for all available categories.
     """
     @app.route('/categories')
-    def retrieve_categories():
-        all_categories = Category.query.all()
-        categories = Category.query.order_by(Category.id).all()
-        all_categories = [category.format() for category in categories]
-    
-    if len(all_categories) == 0:
-      abort(404)
+    @app.route("/categories")
+    def get_all_categories():
+        categories = Category.query.all()
+        categoriesDict = {}
 
-    return jsonify({
-      'success': True,
-      'categories': all_categories,
-      'total_categories': len(all_categories)
-    })
+        for category in categories:
+            categoriesDict[category.id] = category.type
+
+        return jsonify({
+            'success': True,
+            'categories': categoriesDict
+        })
+
 
 
     """
@@ -62,15 +72,6 @@ def create_app(test_config=None):
     ten questions per page and pagination at the bottom of the screen for three pages.
     Clicking on the page numbers should update the questions.
     """
-    def paginate_questions(request, selection):
-        page = request.args.get('page', 1, type=int)
-        start =  (page - 1) * QUESTIONS_PER_PAGE
-        end = start + QUESTIONS_PER_PAGE
-
-        questions = [question.format() for question in selection]
-        current_questions = questions[start:end]
-
-        return current_questions
 
     @app.route('/questions')
     def retrieve_questions():
