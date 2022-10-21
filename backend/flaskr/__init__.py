@@ -278,7 +278,7 @@ def create_app(test_config=None):
     one question at a time is displayed, the user is allowed to answer
     and shown whether they were correct or not.
     """
-    @app.route('/quizzes', methods=['POST'])
+    @app.route('/quiz', methods=['POST'])
     def play_quiz():
         body = request.get_json()
         #The code checks if the request is empty or if the previous questions and category are empty.
