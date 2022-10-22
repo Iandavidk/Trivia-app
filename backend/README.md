@@ -40,8 +40,6 @@ psql trivia < trivia.psql
 
 From within the `backend` directory first ensure you are working using your created virtual environment and start the Flask server by running:
 
-To run the server, execute:
-
 ```bash
 export FLASK_APP=flaskr
 export FLASK_ENV=development
