@@ -8,21 +8,22 @@ from models import setup_db, Question, Category
 
 
 class TriviaTestCase(unittest.TestCase):
-    """This class represents the trivia test case"""
+    #Sets up the TriviaTestCase class
 
     def setUp(self):
-        """Define test variables and initialize app."""
+        #Sets up the test database as well as the app and client objects.
         self.app = create_app()
         self.client = self.app.test_client
         self.database_name = "trivia_test"
         self.database_path = "postgres://postgres:Autodesk123!@{}/{}".format('localhost:5432', self.database_name)
         setup_db(self.app, self.database_path)
 
-        # binds the app to the current context
+        #initializes the SQLAlchemy library using the app_context() function from the app module.
         with self.app.app_context():
             self.db = SQLAlchemy()
+            #creates a new database using the SQLAlchemy library.
             self.db.init_app(self.app)
-            # create all tables
+            # creates all the tables in the new database.
             self.db.create_all()
 
         self.new_question = {
@@ -46,7 +47,7 @@ class TriviaTestCase(unittest.TestCase):
         }
 
         self.quiz = {
-            'previous_questions': [6, 11, 19, 21],
+            'previous_questions': [6, 10, 11, 19],
             'category': 0
         }
 
@@ -61,28 +62,39 @@ class TriviaTestCase(unittest.TestCase):
         }
     
     def tearDown(self):
-        """Executed after reach test"""
+        # Executed at end of test
         pass
 
     """
     TODO
     Write at least one test for each test for successful operation and for expected errors.
     """
-    # Getting all categories
+    #Retrieving all categories
     def test_categories_retrieval(self):
+        # Retrieves a list of all categories from the '/categories' endpoint.
         res = self.client().get('/categories')
         data = json.loads(res.data)
+        """
+        Verifies that the response was successful (status code was 200) and that the data contains a list of categories.
 
+        Verifies that the number of categories returned is as expected.
+        """
         self.assertEqual(res.status_code, 200)
         self.assertTrue(data['success'])
         self.assertTrue(len(data['categories']))
         self.assertTrue(data['total_categories'])
 
-    # Getting all questions
+    # Retriving all questions
     def test_questions_retrieval(self):
+        # Retrieve the list of questions from the server.
         res = self.client().get('/questions')
         data = json.loads(res.data)
 
+        """
+        Verify that the status code was 200 (meaning the request was successful), 
+        that there are a total of questions, that the questions list is not empty, 
+        and that the categories list is not empty.
+        """
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['success'], True)
         self.assertTrue(data['total_questions'])
@@ -105,11 +117,11 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(data['success'], False)
         self.assertEqual(data['message'], 'resource not found')
 
-    # Deleting a question
+    #Testing the deletion of questions from the database
     def test_question_deletion(self):
         res = self.client().delete('/questions/10')
         data = json.loads(res.data)
-
+        #Retrieving question 10 from database and checking the status code is 200 and whether it has been deleted successfully.
         question = Question.query.filter(Question.id==10).one_or_none()
 
         self.assertEqual(res.status_code, 200)
@@ -125,7 +137,7 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(data['success'], False)
         self.assertEqual(data['message'], 'resource not found')
 
-    # Creating a question
+    # creates a new question and posts it to the server.
     def test_question_creation(self):
         res = self.client().post('/questions', json=self.new_question)
         data = json.loads(res.data)
@@ -149,11 +161,11 @@ class TriviaTestCase(unittest.TestCase):
 
         self.assertEqual(res.status_code, 422)
         self.assertEqual(data['success'], False)
-        self.assertEqual(data['message'], 'unprocessable')
+        self.assertEqual(data['message'], 'request cannot be processed')
 
-    # Searching for questions
+    # The code is trying to search a question to the /questions/search endpoint
     def test_questions_search(self):
-        res = self.client().post('/questions/search', json={'search_term': 'title'})
+        res = self.client().post('/questions/search', json={'searchTerm': 'title'})
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
@@ -170,14 +182,14 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(data['message'], 'bad request')
 
     def test_404_no_questions_found(self):
-        res = self.client().post('/questions/search', json={'search_term': 'bestbuddy'})
+        res = self.client().post('/questions/search', json={'searchTerm': 'bestbuddy'})
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 404)
         self.assertEqual(data['success'], False)
         self.assertEqual(data['message'], 'resource not found')
 
-    # Getting questions by category
+    # The code is retrieving the first question from the category 1 and then  checking to see if it was successful.
     def test_questions_retrieval_by_category(self):
         res = self.client().get('/categories/1/questions')
         data = json.loads(res.data)
@@ -204,7 +216,7 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(data['success'], False)
         self.assertEqual(data['message'], 'resource not found')
 
-    # Playing the quiz
+    # The code is trying to play a quiz and test whether the request was successful.
     def test_random_quiz(self):
         res = self.client().post('/quiz', json=self.quiz)
         data = json.loads(res.data)
@@ -227,7 +239,7 @@ class TriviaTestCase(unittest.TestCase):
 
         self.assertEqual(res.status_code, 422)
         self.assertEqual(data['success'], False)
-        self.assertEqual(data['message'], 'unprocessable')
+        self.assertEqual(data['message'], 'request cannot be processed')
 
     def test_random_quiz_completed(self):
         res = self.client().post('/quiz', json=self.quiz_completed)
