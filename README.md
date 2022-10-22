@@ -30,7 +30,7 @@ The [backend](https://github.com/Iandavidk/Trivia-app/tree/main/backend) directo
 1. `backend/flaskr/__init__.py`
 2. `backend/test_flaskr.py`
 
-See the [Backend README.md](https://github.com/Iandavidk/Trivia-app/blob/main/README.md) for more information
+See the [Backend README.md](https://github.com/Iandavidk/Trivia-app/blob/main/README.md) for more information.
 
 ## Frontend
 
@@ -43,6 +43,6 @@ After you complete your endpoints, ensure you return to the frontend to confirm 
 - Endpoints defined as expected by the frontend
 - Response body provided as expected by the frontend
 
-
+See the [Frontend README.md](https://github.com/Iandavidk/Trivia-app/blob/main/frontend/README.md) for more information.
 
 
